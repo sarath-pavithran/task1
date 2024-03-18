@@ -1,0 +1,233 @@
+_schema-version: "3.1"
+ID: task1
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: task1-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: task1-db
+  - name: uaa_task1
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+  build-parameters:
+    builder: npm
+- name: task1-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: task1-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: task1-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: task1-destination-service
+    parameters:
+      content-target: true
+  - name: task1_html_repo_host
+    parameters:
+      service-key:
+        name: task1_html_repo_host-key
+  - name: uaa_task1
+    parameters:
+      service-key:
+        name: uaa_task1-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: appp_task1_html_repo_host
+          ServiceInstanceName: task1-html5-app-host-service
+          ServiceKeyName: task1_html_repo_host-key
+          sap.cloud.service: appp
+        - Authentication: OAuth2UserTokenExchange
+          Name: appp_uaa_task1
+          ServiceInstanceName: task1-xsuaa-service
+          ServiceKeyName: uaa_task1-key
+          sap.cloud.service: appp
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: task1-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: task1_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - schoolapp.zip
+      name: schoolapp
+      target-path: resources/
+    - artifacts:
+      - student.zip
+      name: student
+      target-path: resources/
+    - artifacts:
+      - schooldata.zip
+      name: schooldata
+      target-path: resources/
+    - artifacts:
+      - project1.zip
+      name: project1
+      target-path: resources/
+    - artifacts:
+      - studentdata1to1.zip
+      name: studentdata1to1
+      target-path: resources/
+    - artifacts:
+      - school1tm.zip
+      name: school1tm
+      target-path: resources/
+    - artifacts:
+      - grihanadhab.zip
+      name: grihanadhab
+      target-path: resources/
+    - artifacts:
+      - houseowner.zip
+      name: houseowner
+      target-path: resources/
+- name: schoolapp
+  type: html5
+  path: app/school-app
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: student
+  type: html5
+  path: app/student
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: schooldata
+  type: html5
+  path: app/school-data
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: project1
+  type: html5
+  path: app/project1
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: studentdata1to1
+  type: html5
+  path: app/student-data1to1
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: school1tm
+  type: html5
+  path: app/school1tm
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: grihanadhab
+  type: html5
+  path: app/grihanadh-ab
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: houseowner
+  type: html5
+  path: app/house-owner
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: task1-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: task1-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: task1-srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: task1-destination-service
+    service-plan: lite
+  requires:
+  - name: srv-api
+- name: task1_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: task1-html5-app-host-service
+    service-plan: app-host
+- name: uaa_task1
+  type: org.cloudfoundry.managed-service
+  parameters:
+    path: ./xs-security.json
+    service: xsuaa
+    service-name: task1-xsuaa-service
+    service-plan: application
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production

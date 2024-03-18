@@ -1,0 +1,54 @@
+{
+    "name": "task1",
+    "version": "1.0.0",
+    "description": "A simple CAP project.",
+    "repository": "<Add your repository here>",
+    "license": "UNLICENSED",
+    "private": true,
+    "dependencies": {
+        "@sap/cds": "^7",
+        "@sap/cds-hana": "^2",
+        "@sap/hdi-deploy": "^4.9.2",
+        "express": "^4"
+    },
+    "devDependencies": {
+        "@cap-js/sqlite": "^1",
+        "@sap/cds-dk": "^7",
+        "@sap/ux-specification": "^1.120.5",
+        "rimraf": "^3.0.2"
+    },
+    "scripts": {
+        "start": "cds-serve",
+        "watch-school-app": "cds watch --open school-app/webapp/index.html?sap-ui-xx-viewCache=false",
+        "undeploy": "cf undeploy task1 --delete-services --delete-service-keys --delete-service-brokers",
+        "build": "rimraf resources mta_archives && mbt build --mtar archive",
+        "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+        "watch-student": "cds watch --open student/webapp/index.html?sap-ui-xx-viewCache=false",
+        "watch-school-data": "cds watch --open school-data/webapp/index.html?sap-ui-xx-viewCache=false",
+        "watch-project1": "cds watch --open project1/webapp/index.html?sap-ui-xx-viewCache=false",
+        "watch-student-data1to1": "cds watch --open student-data1to1/webapp/index.html?sap-ui-xx-viewCache=false",
+        "watch-school1tm": "cds watch --open school1tm/webapp/index.html?sap-ui-xx-viewCache=false",
+        "watch-grihanadh-ab": "cds watch --open grihanadh-ab/webapp/index.html?sap-ui-xx-viewCache=false",
+        "watch-house-owner": "cds watch --open house-owner/webapp/index.html?sap-ui-xx-viewCache=false"
+    },
+    "cds": {
+        "requires": {
+            "db": "hana"
+        }
+    },
+    "sapux": [
+        "app/school-app",
+        "app/student",
+        "app/school-data",
+        "app/school-data",
+        "app/project1",
+        "app/student-data1to1",
+        "app/project1",
+        "app/project1",
+        "app/school1tm",
+        "app/grihanadh-ab",
+        "app/house-owner",
+        "app/house-owner",
+        "app/project1"
+    ]
+}

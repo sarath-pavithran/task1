@@ -1,0 +1,139 @@
+{
+    "_version": "1.59.0",
+    "sap.app": {
+        "id": "houseowner",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap/generator-fiori:lrop",
+            "version": "1.12.5",
+            "toolsId": "d9368279-a693-4f1f-bebd-e7ceb8dd0cc9"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/odata/v4/my/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "odataVersion": "4.0"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.121.2",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ushell": {},
+                "sap.fe.templates": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "houseowner.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            },
+            "@i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            }
+        },
+        "resources": {
+            "css": []
+        },
+        "routing": {
+            "routes": [
+                {
+                    "pattern": ":?query:",
+                    "name": "grihanadhList",
+                    "target": "grihanadhList"
+                },
+                {
+                    "pattern": "grihanadh({key}):?query:",
+                    "name": "grihanadhObjectPage",
+                    "target": "grihanadhObjectPage"
+                }
+            ],
+            "targets": {
+                "grihanadhList": {
+                    "type": "Component",
+                    "id": "grihanadhList",
+                    "name": "sap.fe.templates.ListReport",
+                    "options": {
+                        "settings": {
+                            "contextPath": "/grihanadh",
+                            "variantManagement": "Page",
+                            "navigation": {
+                                "grihanadh": {
+                                    "detail": {
+                                        "route": "grihanadhObjectPage"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "grihanadhObjectPage": {
+                    "type": "Component",
+                    "id": "grihanadhObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "contextPath": "/grihanadh",
+                            "navigation": {}
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "sap.fiori": {
+        "registrationIds": [],
+        "archeType": "transactional"
+    },
+    "sap.cloud": {
+        "public": true,
+        "service": "appp"
+    }
+}
